@@ -1447,6 +1447,42 @@ std::shared_ptr<SocketContext> GetFTPListenSocket(std::shared_ptr<SocketContext>
 			Notice(IDS_MSGJPN023);
 			return {};
 		}
+	} else if (PortRangeEnabled == YES && PortRangeMin > 0 && PortRangeMax >= PortRangeMin) {
+		Debug(L"Use normal BIND with fixed port range."sv);
+		// 指定範囲内のポートを順に試してbind()する
+		// (AWSセキュリティグループ等、送信元ポートでのフィルタができない環境で
+		//  アクティブモードのデータ接続ポートを固定するための対応。
+		//  FileZillaの "Limit local ports used by FileZilla" 相当)
+		bool bound = false;
+		for (int port = PortRangeMin; port <= PortRangeMax; port++) {
+			if (saListen.ss_family == AF_INET)
+				reinterpret_cast<sockaddr_in&>(saListen).sin_port = htons(static_cast<uint16_t>(port));
+			else
+				reinterpret_cast<sockaddr_in6&>(saListen).sin6_port = htons(static_cast<uint16_t>(port));
+			if (bind(listen_skt->handle, reinterpret_cast<const sockaddr*>(&saListen), salen) == 0) {
+				bound = true;
+				break;
+			}
+			// このポートは使用中等の理由でbindできなかった。次のポートを試す。
+		}
+		if (!bound) {
+			WSAError(L"bind()"sv);
+			Notice(IDS_MSGJPN027);
+			return {};
+		}
+		salen = sizeof saListen;
+		if (getsockname(listen_skt->handle, reinterpret_cast<sockaddr*>(&saListen), &salen) == SOCKET_ERROR) {
+			WSAError(L"getsockname()"sv);
+			Notice(IDS_MSGJPN027);
+			return {};
+		}
+		if (listen_skt->Listen(1) != 0) {
+			WSAError(L"listen()"sv);
+			Notice(IDS_MSGJPN027);
+			return {};
+		}
+		// 固定ポート範囲を使う場合、UPnPによる自動ポートマッピングは対象外とする
+		// (このケースは固定レンジをFW/SGで静的に開放済みであることが前提のため)
 	} else {
 		Debug(L"Use normal BIND."sv);
 		// Control接続と同じアドレス（ただしport=0）でlistenする

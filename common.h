@@ -525,6 +525,14 @@ inline int DispPermissionsNumber = NO;
 inline int MakeAllDir = YES;
 inline int LocalKanjiCode = KANJI_SJIS;
 inline int UPnPEnabled = NO;
+// アクティブモード(PORT)のデータ接続用リスニングソケットに使うローカルポート範囲。
+// PortRangeEnabled == YES のとき、PortRangeMin〜PortRangeMax の範囲内で
+// bind()可能なポートを探して使用する(FileZillaのLimit local port range相当)。
+// 主にAWS等、送信元ポートでのフィルタができないセキュリティグループ配下で
+// アクティブモードFTPを使うための対応。
+inline int PortRangeEnabled = NO;
+inline int PortRangeMin = 0;
+inline int PortRangeMax = 0;
 inline int EncryptAllSettings = NO;
 inline int AutoRefreshFileList = YES;
 inline int RemoveOldLog = NO;
