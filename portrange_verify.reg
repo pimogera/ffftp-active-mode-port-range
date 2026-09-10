@@ -1,0 +1,23 @@
+Windows Registry Editor Version 5.00
+
+; ffftp active-mode port-range 動作確認用レジストリ設定
+;
+; このビルドの検証機能(PortRangeEnabled/PortRangeMin/PortRangeMax)には
+; 現時点で設定画面(GUI)がまだありません。テスト時はこの .reg を
+; ダブルクリックしてインポートしてから FFFTP を起動してください。
+;
+; 値の意味:
+;   PortRangeEnabled = 1  … アクティブモードのデータ接続で固定ポート範囲を使う
+;   PortRangeMin     = 50000
+;   PortRangeMax     = 50100
+; (社内で運用中の範囲 50000-50100 をデフォルトにしています。別の範囲で
+;  試す場合は数値を書き換えてから再度インポートしてください)
+;
+; 無効化(通常のOS任せのランダムポートに戻す)する場合は
+; PortRangeEnabled を 0 にした .reg を作り直してインポートするか、
+; regedit で HKEY_CURRENT_USER\Software\Sota\FFFTP を直接編集してください。
+
+[HKEY_CURRENT_USER\Software\Sota\FFFTP]
+"PortRangeEnabled"=dword:00000001
+"PortRangeMin"=dword:0000c350
+"PortRangeMax"=dword:0000c3b4
