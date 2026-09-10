@@ -1300,7 +1300,7 @@ static inline auto replace(std::basic_string_view<Char> input, boost::basic_rege
 }
 template<int captionId = IDS_APP>
 static inline auto Message(HWND owner, int textId, DWORD style) noexcept {
-	MSGBOXPARAMSW msgBoxParams{ sizeof MSGBOXPARAMSW, owner, GetFtpInst(), MAKEINTRESOURCEW(textId), MAKEINTRESOURCEW(captionId), style, nullptr, 0, nullptr, LANG_NEUTRAL };
+	MSGBOXPARAMSW msgBoxParams{ sizeof(MSGBOXPARAMSW), owner, GetFtpInst(), MAKEINTRESOURCEW(textId), MAKEINTRESOURCEW(captionId), style, nullptr, 0, nullptr, LANG_NEUTRAL };
 	return MessageBoxIndirectW(&msgBoxParams);
 }
 template<int captionId = IDS_APP>
