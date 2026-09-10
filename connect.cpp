@@ -1456,9 +1456,9 @@ std::shared_ptr<SocketContext> GetFTPListenSocket(std::shared_ptr<SocketContext>
 		bool bound = false;
 		for (int port = PortRangeMin; port <= PortRangeMax; port++) {
 			if (saListen.ss_family == AF_INET)
-				reinterpret_cast<sockaddr_in&>(saListen).sin_port = htons(static_cast<uint16_t>(port));
+			    reinterpret_cast<sockaddr_in&>(saListen).sin_port = htons(gsl::narrow_cast<uint16_t>(port));
 			else
-				reinterpret_cast<sockaddr_in6&>(saListen).sin6_port = htons(static_cast<uint16_t>(port));
+			    reinterpret_cast<sockaddr_in6&>(saListen).sin6_port = htons(gsl::narrow_cast<uint16_t>(port));
 			if (bind(listen_skt->handle, reinterpret_cast<const sockaddr*>(&saListen), salen) == 0) {
 				bound = true;
 				break;
